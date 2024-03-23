@@ -1,0 +1,18 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "managedClusters_openfaas_cluster_name": {
+            "value": null
+        },
+        "virtualNetworks_uit_openfaas_vnet_externalid": {
+            "value": null
+        },
+        "publicIPAddresses_886e16a6_3e52_4d49_83c5_916db38205b9_externalid": {
+            "value": null
+        },
+        "userAssignedIdentities_openfaas_cluster_agentpool_externalid": {
+            "value": null
+        }
+    }
+}

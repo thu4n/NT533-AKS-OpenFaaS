@@ -1,0 +1,256 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "managedClusters_openfaas_cluster_name": {
+            "defaultValue": "openfaas-cluster",
+            "type": "String"
+        },
+        "virtualNetworks_uit_openfaas_vnet_externalid": {
+            "defaultValue": "/subscriptions/542920ae-a299-4431-be6b-d8b9b35d691e/resourceGroups/uit-openfaas/providers/Microsoft.Network/virtualNetworks/uit-openfaas-vnet",
+            "type": "String"
+        },
+        "publicIPAddresses_886e16a6_3e52_4d49_83c5_916db38205b9_externalid": {
+            "defaultValue": "/subscriptions/542920ae-a299-4431-be6b-d8b9b35d691e/resourceGroups/MC_uit-openfaas_openfaas-cluster_eastus/providers/Microsoft.Network/publicIPAddresses/886e16a6-3e52-4d49-83c5-916db38205b9",
+            "type": "String"
+        },
+        "userAssignedIdentities_openfaas_cluster_agentpool_externalid": {
+            "defaultValue": "/subscriptions/542920ae-a299-4431-be6b-d8b9b35d691e/resourceGroups/MC_uit-openfaas_openfaas-cluster_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/openfaas-cluster-agentpool",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ContainerService/managedClusters",
+            "apiVersion": "2023-11-02-preview",
+            "name": "[parameters('managedClusters_openfaas_cluster_name')]",
+            "location": "eastus",
+            "sku": {
+                "name": "Base",
+                "tier": "Free"
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "kubernetesVersion": "1.27.9",
+                "dnsPrefix": "[concat(parameters('managedClusters_openfaas_cluster_name'), '-dns')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",
+                        "count": 1,
+                        "vmSize": "Standard_B2s",
+                        "osDiskSizeGB": 128,
+                        "osDiskType": "Managed",
+                        "kubeletDiskType": "OS",
+                        "vnetSubnetID": "[concat(parameters('virtualNetworks_uit_openfaas_vnet_externalid'), '/subnets/default')]",
+                        "maxPods": 30,
+                        "type": "VirtualMachineScaleSets",
+                        "maxCount": 2,
+                        "minCount": 1,
+                        "enableAutoScaling": true,
+                        "powerState": {
+                            "code": "Running"
+                        },
+                        "orchestratorVersion": "1.27.9",
+                        "enableNodePublicIP": false,
+                        "mode": "System",
+                        "osType": "Linux",
+                        "osSKU": "Ubuntu",
+                        "enableFIPS": false,
+                        "securityProfile": {
+                            "sshAccess": "LocalUser"
+                        }
+                    }
+                ],
+                "windowsProfile": {
+                    "adminUsername": "azureuser",
+                    "enableCSIProxy": true
+                },
+                "servicePrincipalProfile": {
+                    "clientId": "msi"
+                },
+                "addonProfiles": {
+                    "aciConnectorLinux": {
+                        "enabled": true,
+                        "config": {
+                            "subnetName": "virtual-node-aci"
+                        }
+                    },
+                    "azureKeyvaultSecretsProvider": {
+                        "enabled": false
+                    },
+                    "azurepolicy": {
+                        "enabled": false
+                    }
+                },
+                "nodeResourceGroup": "[concat('MC_uit-openfaas_', parameters('managedClusters_openfaas_cluster_name'), '_eastus')]",
+                "enableRBAC": true,
+                "supportPlan": "KubernetesOfficial",
+                "networkProfile": {
+                    "networkPlugin": "azure",
+                    "networkPolicy": "calico",
+                    "networkDataplane": "azure",
+                    "loadBalancerSku": "Standard",
+                    "loadBalancerProfile": {
+                        "managedOutboundIPs": {
+                            "count": 1
+                        },
+                        "effectiveOutboundIPs": [
+                            {
+                                "id": "[parameters('publicIPAddresses_886e16a6_3e52_4d49_83c5_916db38205b9_externalid')]"
+                            }
+                        ],
+                        "backendPoolType": "nodeIPConfiguration"
+                    },
+                    "serviceCidr": "10.0.0.0/16",
+                    "dnsServiceIP": "10.0.0.10",
+                    "outboundType": "loadBalancer",
+                    "serviceCidrs": [
+                        "10.0.0.0/16"
+                    ],
+                    "ipFamilies": [
+                        "IPv4"
+                    ]
+                },
+                "identityProfile": {
+                    "kubeletidentity": {
+                        "resourceId": "[parameters('userAssignedIdentities_openfaas_cluster_agentpool_externalid')]",
+                        "clientId": "b6e1b878-b684-4359-b698-9554cfb2f8d6",
+                        "objectId": "d5fef1af-f0f3-4328-8abd-23159c561d20"
+                    }
+                },
+                "autoScalerProfile": {
+                    "balance-similar-node-groups": "false",
+                    "daemonset-eviction-for-empty-nodes": false,
+                    "daemonset-eviction-for-occupied-nodes": true,
+                    "expander": "random",
+                    "ignore-daemonsets-utilization": false,
+                    "max-empty-bulk-delete": "10",
+                    "max-graceful-termination-sec": "600",
+                    "max-node-provision-time": "15m",
+                    "max-total-unready-percentage": "45",
+                    "new-pod-scale-up-delay": "0s",
+                    "ok-total-unready-count": "3",
+                    "scale-down-delay-after-add": "10m",
+                    "scale-down-delay-after-delete": "10s",
+                    "scale-down-delay-after-failure": "3m",
+                    "scale-down-unneeded-time": "10m",
+                    "scale-down-unready-time": "20m",
+                    "scale-down-utilization-threshold": "0.5",
+                    "scan-interval": "10s",
+                    "skip-nodes-with-local-storage": "false",
+                    "skip-nodes-with-system-pods": "true"
+                },
+                "autoUpgradeProfile": {
+                    "upgradeChannel": "patch",
+                    "nodeOSUpgradeChannel": "NodeImage"
+                },
+                "disableLocalAccounts": false,
+                "securityProfile": {},
+                "storageProfile": {
+                    "diskCSIDriver": {
+                        "enabled": true,
+                        "version": "v1"
+                    },
+                    "fileCSIDriver": {
+                        "enabled": true
+                    },
+                    "snapshotController": {
+                        "enabled": true
+                    }
+                },
+                "oidcIssuerProfile": {
+                    "enabled": false
+                },
+                "workloadAutoScalerProfile": {},
+                "metricsProfile": {
+                    "costAnalysis": {
+                        "enabled": false
+                    }
+                },
+                "nodeProvisioningProfile": {
+                    "mode": "Manual"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.ContainerService/managedClusters/agentPools",
+            "apiVersion": "2023-11-02-preview",
+            "name": "[concat(parameters('managedClusters_openfaas_cluster_name'), '/agentpool')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ContainerService/managedClusters', parameters('managedClusters_openfaas_cluster_name'))]"
+            ],
+            "properties": {
+                "count": 1,
+                "vmSize": "Standard_B2s",
+                "osDiskSizeGB": 128,
+                "osDiskType": "Managed",
+                "kubeletDiskType": "OS",
+                "vnetSubnetID": "[concat(parameters('virtualNetworks_uit_openfaas_vnet_externalid'), '/subnets/default')]",
+                "maxPods": 30,
+                "type": "VirtualMachineScaleSets",
+                "maxCount": 2,
+                "minCount": 1,
+                "enableAutoScaling": true,
+                "powerState": {
+                    "code": "Running"
+                },
+                "orchestratorVersion": "1.27.9",
+                "enableNodePublicIP": false,
+                "mode": "System",
+                "osType": "Linux",
+                "osSKU": "Ubuntu",
+                "enableFIPS": false,
+                "securityProfile": {
+                    "sshAccess": "LocalUser"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
+            "apiVersion": "2023-11-02-preview",
+            "name": "[concat(parameters('managedClusters_openfaas_cluster_name'), '/aksManagedAutoUpgradeSchedule')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ContainerService/managedClusters', parameters('managedClusters_openfaas_cluster_name'))]"
+            ],
+            "properties": {
+                "maintenanceWindow": {
+                    "schedule": {
+                        "weekly": {
+                            "intervalWeeks": 1,
+                            "dayOfWeek": "Sunday"
+                        }
+                    },
+                    "durationHours": 4,
+                    "utcOffset": "+00:00",
+                    "startDate": "2024-03-23",
+                    "startTime": "00:00"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
+            "apiVersion": "2023-11-02-preview",
+            "name": "[concat(parameters('managedClusters_openfaas_cluster_name'), '/aksManagedNodeOSUpgradeSchedule')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ContainerService/managedClusters', parameters('managedClusters_openfaas_cluster_name'))]"
+            ],
+            "properties": {
+                "maintenanceWindow": {
+                    "schedule": {
+                        "weekly": {
+                            "intervalWeeks": 1,
+                            "dayOfWeek": "Sunday"
+                        }
+                    },
+                    "durationHours": 4,
+                    "utcOffset": "+00:00",
+                    "startDate": "2024-03-23",
+                    "startTime": "00:00"
+                }
+            }
+        }
+    ]
+}
