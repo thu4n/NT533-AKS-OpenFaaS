@@ -1,1 +1,4 @@
 /faas-cli.exe
+template
+build
+.secrets
