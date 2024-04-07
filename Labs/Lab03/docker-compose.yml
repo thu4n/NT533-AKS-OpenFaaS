@@ -1,0 +1,41 @@
+version: "2.25.0"
+
+networks:
+  iot-net:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.0.0/24
+
+services:
+  node0:
+    image: iperf3-server
+    networks:
+      iot-net:
+        ipv4_address:  172.30.0.10
+
+  node1:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    environment:
+      - SERVER_IP=172.30.0.10
+    networks:
+      iot-net:
+        ipv4_address: 172.30.0.11
+    depends_on:
+      - node0
+
+  node2:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    environment:
+      - SERVER_IP=172.30.0.10
+    networks:
+      iot-net:
+        ipv4_address: 172.30.0.12
+    depends_on:
+      - node0
+
