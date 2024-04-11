@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+</head>
+<body>
+    <h1>Upload an Image</h1>
+    <input type="file" id="imageInput" accept="image/*" style="margin-bottom: 10px;">
+    <br>
+    <img id="uploadedImage" alt="Uploaded Image" width="300" height="300" style="display: none;">
+    <button id="convertBtn">Convert</button>
+    <button style="margin-top: 10px;">
+        <a href="" download="img-with-logo" id="downloadBtn" style="text-decoration: none; color: black;">
+            Download
+        </a>
+    </button>
+    <br>
+    <div>
+        <canvas width="300" height="300" id="canvas"></canvas>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>
