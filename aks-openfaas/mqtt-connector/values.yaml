@@ -1,0 +1,36 @@
+image: ghcr.io/openfaas/mqtt-connector:0.4.3
+replicas: 1
+
+# # Emitter.io example
+topic: room-status/
+
+# Formal MQTT topic example:
+# topic: sample-topic,
+
+# For use with emitter.io
+trimChannelKey: false
+
+contentType: application/json
+
+broker: e80eae609796448aad6807bec5454d58.s1.eu.hivemq.cloud
+clientID: "openfaas-gateway"
+authUser: "openfaas-gateway"
+authPassword: "FaaSgateway8"
+
+upstream_timeout: 30s # Maximum duration for an invocation
+rebuild_interval: 15s
+asyncInvoke: false # Invoke via NATS using the function's asynchronous route
+basic_auth: true
+gateway_url: https://faas.thu4n.dev:8080
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "100m"
+  # limits:
+  #   memory: "256Mi"
+  #   cpu: "100m"
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
