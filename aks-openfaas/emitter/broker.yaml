@@ -35,26 +35,12 @@ spec:
           value: "broker" # or "broker-0.broker.default.svc.cluster.local"
         - name: EMITTER_CLUSTER_ADVERTISE
           value: "private:4000"
-        - name: EMITTER_STORAGE_PROVIDER
-          value: "ssd"
         name: broker
         image: emitter/server:latest
         ports:
           - containerPort: 8080
           - containerPort: 443
           - containerPort: 4000
-        volumeMounts:
-          - name: broker-volume
-            mountPath: /data
       restartPolicy: Always
   updateStrategy:
     type: RollingUpdate
-  volumeClaimTemplates:
-  - metadata:
-      name: broker-volume
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: local-path
-      resources:
-        requests:
-          storage: 10Gi

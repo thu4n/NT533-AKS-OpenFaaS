@@ -57,9 +57,6 @@ spec:
           {{- if .Values.authPassword }}
           - "-password={{.Values.authPassword}}"
           {{- end }}
-          {{- if .Values.authUser }}
-          - "-username={{.Values.authUser}}"
-          {{- end }}
           {{- if .Values.trimChannelKey }}
           - "-trim-channel-key={{.Values.trimChannelKey}}"
           {{- end }}

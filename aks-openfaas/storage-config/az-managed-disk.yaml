@@ -1,0 +1,9 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: emitter-volume
+provisioner: kubernetes.io/azure-disk
+parameters:
+  resourceGroup: uit-openfaas
+  managedDiskName: emitter-volume
+  skuName: Standard_LRS
