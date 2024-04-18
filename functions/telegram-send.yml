@@ -1,0 +1,12 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://faas.thu4n.dev
+functions:
+  telegram-send:
+    lang: go
+    handler: ./telegram-send
+    image: thu4n/telegram-send:latest
+    secrets:
+      - secret-api-key
+
