@@ -1,0 +1,14 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://faas.thu4n.dev/
+functions:
+  youtube-dl:
+    lang: dockerfile
+    handler: ./youtube-dl
+    image: rianle/youtube-dl:latest
+    environment:
+      read_timeout: 300s
+      write_timeout: 300s
+    labels: 
+      com.openfaas.ui.ext: "mp4"
