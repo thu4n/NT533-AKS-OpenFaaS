@@ -1,0 +1,9 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://faas.thu4n.dev
+functions:
+  pdf-writer:
+    lang: node18
+    handler: ./pdf-writer
+    image: nguyendangto/pdf-writer:latest

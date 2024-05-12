@@ -1,0 +1,13 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://faas.thu4n.dev/
+functions:
+  webhook-listener:
+    lang: python3
+    handler: ./webhook-listener
+    image: nguyendangto/webhook-listener:latest
+    environment:
+      write_debug: true
+    environment_file:
+      - env.yml
