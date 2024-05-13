@@ -2,4 +2,4 @@
 template
 build
 .secrets
-terraform/.terraform*
+terraform/
