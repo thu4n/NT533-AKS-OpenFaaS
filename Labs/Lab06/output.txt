@@ -1,0 +1,4 @@
+- word2: 6
+- word4: 1
+- word3: 5
+- word1: 5
